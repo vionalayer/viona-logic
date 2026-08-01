@@ -1,0 +1,9 @@
+{
+  "network": "robinhood",
+  "chainId": 4663,
+  "priceFeed": "0xCB0Fc38a1310C03D7DE11279Fdf8b2332D5c9B36",
+  "trader": "0x65282D832CD1DEA2d50d8DD88852a5e73CAb94e7",
+  "usdg": "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
+  "deployer": "0x6B5b41b75eAFE92D3eE13f076Ce42F532c42B4f0",
+  "deployedAt": "2026-08-01T01:13:37.169Z"
+}
