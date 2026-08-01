@@ -1,0 +1,6 @@
+[package]
+name = "viona_shield"
+type = "bin"
+authors = ["VIONA Labs"]
+
+[dependencies]
