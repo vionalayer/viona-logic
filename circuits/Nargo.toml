@@ -1,0 +1,6 @@
+[package]
+name = "viona_transfer"
+type = "bin"
+authors = ["VIONA Labs"]
+
+[dependencies]
