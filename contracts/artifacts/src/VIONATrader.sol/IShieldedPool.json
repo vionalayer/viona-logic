@@ -1,0 +1,81 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IShieldedPool",
+  "sourceName": "src/VIONATrader.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "membershipRoot",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32[2]",
+              "name": "nullifiers",
+              "type": "bytes32[2]"
+            },
+            {
+              "internalType": "bytes32[2]",
+              "name": "commitments",
+              "type": "bytes32[2]"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "newRoot",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256",
+              "name": "token",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "fee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "recipient",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "relayer",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct IShieldedPool.SpendStatement",
+          "name": "s",
+          "type": "tuple"
+        },
+        {
+          "internalType": "bytes[2]",
+          "name": "ciphertexts",
+          "type": "bytes[2]"
+        },
+        {
+          "internalType": "bytes",
+          "name": "proof",
+          "type": "bytes"
+        }
+      ],
+      "name": "spend",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
