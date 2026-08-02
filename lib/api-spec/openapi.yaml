@@ -1,0 +1,682 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: VIONA Layer — Confidential Execution Layer for Tokenized Capital Markets
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: markets
+    description: Market data for tokenized assets
+  - name: orders
+    description: Order placement and history
+  - name: portfolio
+    description: Portfolio and positions
+  - name: wallet
+    description: Wallet and balance
+  - name: dashboard
+    description: Dashboard summary
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # ── Markets ──────────────────────────────────────────────────────────────────
+  /markets:
+    get:
+      operationId: listMarkets
+      tags: [markets]
+      summary: List all tradeable tokenized assets with live prices
+      responses:
+        "200":
+          description: List of tradeable assets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MarketAsset"
+
+  /markets/movers:
+    get:
+      operationId: getMarketMovers
+      tags: [markets]
+      summary: Top gainers and losers
+      responses:
+        "200":
+          description: Market movers
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketMovers"
+
+  /markets/corporate-actions:
+    get:
+      operationId: getMarketCorporateActions
+      tags: [markets]
+      summary: Recent corporate actions (dividends, splits, multiplier changes)
+      responses:
+        "200":
+          description: List of recent corporate actions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+
+  /markets/{symbol}:
+    get:
+      operationId: getMarket
+      tags: [markets]
+      summary: Get asset details with price and history
+      parameters:
+        - name: symbol
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Asset details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketDetail"
+        "404":
+          description: Asset not found
+
+  /markets/{symbol}/chart/{range}:
+    get:
+      operationId: getMarketChart
+      tags: [markets]
+      summary: Price history for a symbol (for chart rendering)
+      parameters:
+        - name: symbol
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: range
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Chart data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChartData"
+
+  # ── Orders ───────────────────────────────────────────────────────────────────
+  /orders:
+    get:
+      operationId: listOrders
+      tags: [orders]
+      summary: List all orders
+      responses:
+        "200":
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+    post:
+      operationId: createOrder
+      tags: [orders]
+      summary: Place a new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderInput"
+      responses:
+        "201":
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Invalid order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /orders/recent:
+    get:
+      operationId: getRecentOrders
+      tags: [orders]
+      summary: Recent order activity feed (last 10)
+      responses:
+        "200":
+          description: Recent orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+
+  /orders/{id}:
+    get:
+      operationId: getOrder
+      tags: [orders]
+      summary: Get order details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Not found
+    delete:
+      operationId: cancelOrder
+      tags: [orders]
+      summary: Cancel a pending order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Order cancelled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "400":
+          description: Cannot cancel
+
+  # ── Portfolio ─────────────────────────────────────────────────────────────────
+  /portfolio:
+    get:
+      operationId: getPortfolio
+      tags: [portfolio]
+      summary: Portfolio overview — positions, total value, P&L
+      responses:
+        "200":
+          description: Portfolio summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Portfolio"
+
+  /portfolio/positions:
+    get:
+      operationId: listPositions
+      tags: [portfolio]
+      summary: All open positions
+      responses:
+        "200":
+          description: Positions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Position"
+
+  /portfolio/performance/{range}:
+    get:
+      operationId: getPortfolioPerformance
+      tags: [portfolio]
+      summary: Portfolio performance over time
+      parameters:
+        - name: range
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Performance data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PerformanceData"
+
+  # ── Wallet ───────────────────────────────────────────────────────────────────
+  /wallet:
+    get:
+      operationId: getWallet
+      tags: [wallet]
+      summary: Wallet balance
+      responses:
+        "200":
+          description: Wallet info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+
+  /wallet/deposit:
+    post:
+      operationId: depositFunds
+      tags: [wallet]
+      summary: Deposit USDG into wallet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepositInput"
+      responses:
+        "200":
+          description: Updated wallet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Wallet"
+
+  # ── Dashboard ────────────────────────────────────────────────────────────────
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [dashboard]
+      summary: Dashboard summary — portfolio value, day P&L, total trades, top movers
+      responses:
+        "200":
+          description: Dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+# ── Schemas ───────────────────────────────────────────────────────────────────
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+
+    MarketAsset:
+      type: object
+      properties:
+        symbol:
+          type: string
+        name:
+          type: string
+        assetType:
+          type: string
+          description: "STOCK | ETF | TREASURY | RWA"
+        price:
+          type: number
+        change:
+          type: number
+          description: Absolute price change today
+        changePercent:
+          type: number
+          description: Percentage change today
+        volume:
+          type: ["number", "null"]
+        marketCap:
+          type: ["number", "null"]
+        high52w:
+          type: ["number", "null"]
+        low52w:
+          type: ["number", "null"]
+        bid:
+          type: ["number", "null"]
+          description: Live bid from Robinhood RHJ API
+        ask:
+          type: ["number", "null"]
+          description: Live ask from Robinhood RHJ API
+        logoUrl:
+          type: ["string", "null"]
+          description: Official Robinhood CDN logo URL
+        contractAddress:
+          type: ["string", "null"]
+          description: ERC-20 contract address on Robinhood Chain (4663)
+        currentMultiplier:
+          type: ["number", "null"]
+          description: Corporate action multiplier (1.0 = no adjustment; CRWD = 4.0)
+        isTradingHalt:
+          type: ["boolean", "null"]
+          description: Whether trading is currently halted for this token
+        tradingCapabilities:
+          type: ["object", "null"]
+          description: Which sessions this token supports
+          properties:
+            market:
+              type: boolean
+              description: Tradeable during regular hours 9:30AM–4PM ET
+            extended:
+              type: boolean
+              description: Tradeable during extended hours (pre/post market)
+            overnight:
+              type: boolean
+              description: Tradeable 24/7 including overnight
+      required: [symbol, name, assetType, price, change, changePercent]
+
+    MarketDetail:
+      type: object
+      properties:
+        symbol:
+          type: string
+        name:
+          type: string
+        assetType:
+          type: string
+        price:
+          type: number
+        change:
+          type: number
+        changePercent:
+          type: number
+        volume:
+          type: ["number", "null"]
+        marketCap:
+          type: ["number", "null"]
+        high52w:
+          type: ["number", "null"]
+        low52w:
+          type: ["number", "null"]
+        open:
+          type: ["number", "null"]
+        previousClose:
+          type: ["number", "null"]
+        dayHigh:
+          type: ["number", "null"]
+        dayLow:
+          type: ["number", "null"]
+        bid:
+          type: ["number", "null"]
+          description: Live bid from Robinhood RHJ API
+        ask:
+          type: ["number", "null"]
+          description: Live ask from Robinhood RHJ API
+        logoUrl:
+          type: ["string", "null"]
+          description: Official Robinhood CDN logo URL
+        contractAddress:
+          type: ["string", "null"]
+          description: ERC-20 contract address on Robinhood Chain (4663)
+        currentMultiplier:
+          type: ["number", "null"]
+          description: Corporate action multiplier (1.0 = no adjustment)
+        isTradingHalt:
+          type: ["boolean", "null"]
+          description: Whether trading is currently halted
+        tradingCapabilities:
+          type: ["object", "null"]
+          description: Which sessions this token supports
+          properties:
+            market:
+              type: boolean
+            extended:
+              type: boolean
+            overnight:
+              type: boolean
+      required: [symbol, name, assetType, price, change, changePercent]
+
+    MarketMovers:
+      type: object
+      properties:
+        gainers:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarketAsset"
+        losers:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarketAsset"
+      required: [gainers, losers]
+
+    ChartPoint:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        price:
+          type: number
+        volume:
+          type: ["number", "null"]
+      required: [timestamp, price]
+
+    ChartData:
+      type: object
+      properties:
+        symbol:
+          type: string
+        range:
+          type: string
+        points:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChartPoint"
+      required: [symbol, range, points]
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: number
+        symbol:
+          type: string
+        name:
+          type: string
+        side:
+          type: string
+          description: "BUY | SELL"
+        orderType:
+          type: string
+          description: "MARKET | LIMIT"
+        quantity:
+          type: number
+        limitPrice:
+          type: ["number", "null"]
+        executionPrice:
+          type: ["number", "null"]
+        status:
+          type: string
+          description: "PENDING | FILLED | CANCELLED"
+        totalValue:
+          type: ["number", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        filledAt:
+          type: ["string", "null"]
+        logoUrl:
+          type: ["string", "null"]
+          description: Official Robinhood CDN logo URL
+        contractAddress:
+          type: ["string", "null"]
+          description: ERC-20 contract address on Robinhood Chain (4663)
+      required: [id, symbol, name, side, orderType, quantity, status, createdAt]
+
+    OrderInput:
+      type: object
+      properties:
+        symbol:
+          type: string
+        side:
+          type: string
+          description: "BUY | SELL"
+        orderType:
+          type: string
+          description: "MARKET | LIMIT"
+        quantity:
+          type: number
+        limitPrice:
+          type: ["number", "null"]
+        walletAddress:
+          type: string
+          description: "Connected EVM wallet address (0x...)"
+        signature:
+          type: string
+          description: "EIP-191 signed order message from the wallet"
+        timestamp:
+          type: number
+          description: "Unix timestamp (seconds) embedded in the signed message for replay protection"
+      required: [symbol, side, orderType, quantity]
+
+    Position:
+      type: object
+      properties:
+        symbol:
+          type: string
+        name:
+          type: string
+        quantity:
+          type: number
+        avgCost:
+          type: number
+        currentPrice:
+          type: number
+        marketValue:
+          type: number
+        unrealizedPnl:
+          type: number
+        unrealizedPnlPercent:
+          type: number
+        dayChange:
+          type: number
+        dayChangePercent:
+          type: number
+        logoUrl:
+          type: ["string", "null"]
+          description: Official Robinhood CDN logo URL
+        contractAddress:
+          type: ["string", "null"]
+          description: ERC-20 contract address on Robinhood Chain (4663)
+      required: [symbol, name, quantity, avgCost, currentPrice, marketValue, unrealizedPnl, unrealizedPnlPercent, dayChange, dayChangePercent]
+
+    Portfolio:
+      type: object
+      properties:
+        totalValue:
+          type: number
+        cashBalance:
+          type: number
+        investedValue:
+          type: number
+        totalPnl:
+          type: number
+        totalPnlPercent:
+          type: number
+        dayPnl:
+          type: number
+        dayPnlPercent:
+          type: number
+        positions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Position"
+      required: [totalValue, cashBalance, investedValue, totalPnl, totalPnlPercent, dayPnl, dayPnlPercent, positions]
+
+    PerformancePoint:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        value:
+          type: number
+      required: [date, value]
+
+    PerformanceData:
+      type: object
+      properties:
+        range:
+          type: string
+        points:
+          type: array
+          items:
+            $ref: "#/components/schemas/PerformancePoint"
+        startValue:
+          type: number
+        endValue:
+          type: number
+        changePercent:
+          type: number
+      required: [range, points, startValue, endValue, changePercent]
+
+    Wallet:
+      type: object
+      properties:
+        balance:
+          type: number
+        currency:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+      required: [balance, currency, updatedAt]
+
+    DepositInput:
+      type: object
+      properties:
+        amount:
+          type: number
+      required: [amount]
+
+    DashboardSummary:
+      type: object
+      properties:
+        portfolioValue:
+          type: number
+        cashBalance:
+          type: number
+        dayPnl:
+          type: number
+        dayPnlPercent:
+          type: number
+        totalPnl:
+          type: number
+        totalTrades:
+          type: number
+        openPositions:
+          type: number
+        topMovers:
+          type: array
+          items:
+            $ref: "#/components/schemas/MarketAsset"
+        recentOrders:
+          type: array
+          items:
+            $ref: "#/components/schemas/Order"
+      required: [portfolioValue, cashBalance, dayPnl, dayPnlPercent, totalPnl, totalTrades, openPositions, topMovers, recentOrders]
