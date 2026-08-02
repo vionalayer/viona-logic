@@ -1,0 +1,35 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "StubVerifier",
+  "sourceName": "src/StubVerifier.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "",
+          "type": "bytes32[]"
+        }
+      ],
+      "name": "verify",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080806040523460145760ee908161001a8239f35b600080fdfe6080806040526004361015601257600080fd5b60003560e01c63ea50d0e414602657600080fd5b3460b357604036600319011260b35760043567ffffffffffffffff811160b3573660238201121560b357806004013567ffffffffffffffff811160b3573691016024011160b35760243567ffffffffffffffff811160b3573660238201121560b35780600401359067ffffffffffffffff821160b357602490369260051b01011160b35780600160209252f35b600080fdfea264697066735822122075799fd04e378838d9b1cb4515a5d817a6bfbfda346d292d61c3b6fc3d71286d64736f6c634300081b0033",
+  "deployedBytecode": "0x6080806040526004361015601257600080fd5b60003560e01c63ea50d0e414602657600080fd5b3460b357604036600319011260b35760043567ffffffffffffffff811160b3573660238201121560b357806004013567ffffffffffffffff811160b3573691016024011160b35760243567ffffffffffffffff811160b3573660238201121560b35780600401359067ffffffffffffffff821160b357602490369260051b01011160b35780600160209252f35b600080fdfea264697066735822122075799fd04e378838d9b1cb4515a5d817a6bfbfda346d292d61c3b6fc3d71286d64736f6c634300081b0033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
