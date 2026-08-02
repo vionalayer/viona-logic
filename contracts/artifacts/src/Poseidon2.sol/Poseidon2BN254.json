@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "Poseidon2BN254",
+  "sourceName": "src/Poseidon2.sol",
+  "abi": [],
+  "bytecode": "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea264697066735822122007ea2cf08e2afcde1febeed4ea5732ea6bd4c70259d1253eca5158d61db0d2f764736f6c634300081b0033",
+  "deployedBytecode": "0x600080fdfea264697066735822122007ea2cf08e2afcde1febeed4ea5732ea6bd4c70259d1253eca5158d61db0d2f764736f6c634300081b0033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
