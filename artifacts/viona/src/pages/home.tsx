@@ -225,6 +225,27 @@ export function HomePage() {
               </button>
             </Link>
           </div>
+
+          {/* Contract address */}
+          <div
+            style={{
+              marginTop: 28,
+              display: 'inline-flex', alignItems: 'center', gap: 10,
+              background: 'hsl(var(--primary) / 0.04)',
+              border: '1px solid hsl(var(--primary) / 0.15)',
+              padding: '7px 16px',
+            }}
+          >
+            <span style={{ fontSize: '8px', letterSpacing: '0.18em', fontFamily: 'var(--app-font-mono)', color: 'hsl(var(--muted-foreground))', textTransform: 'uppercase' }}>
+              Contract
+            </span>
+            <span style={{ width: 1, height: 12, background: 'hsl(var(--primary) / 0.2)' }} />
+            <span
+              style={{ fontSize: '10px', fontFamily: 'var(--app-font-mono)', color: 'hsl(var(--primary))', letterSpacing: '0.04em', userSelect: 'all' }}
+            >
+              0x75C51371782C819C6F8Fd741c0fD35b53d1b5732
+            </span>
+          </div>
         </div>
 
         {/* Scroll hint */}
